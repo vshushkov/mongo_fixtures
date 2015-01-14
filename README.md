@@ -1,6 +1,6 @@
 # MongoFixtures library for Dart
 
-A library for inserting your test fixtures to MongoDb using [mongo_dart](https://pub.dartlang.org/packages/mongo_dart).
+A library for inserting your test fixtures into the MongoDb using [mongo_dart](https://pub.dartlang.org/packages/mongo_dart).
 
 ## Usage
 
