@@ -1,0 +1,12 @@
+name: mongo_fixtures
+description: >
+  A library useful for applications or for sharing on pub.dartlang.org.
+version: 0.0.1
+#author: <your name> <email@example.com>
+#homepage: https://www.example.com
+dependencies:
+  mongo_dart: '>=0.1.45 <0.2.0'
+#  config:
+#    path: /opt/projects/redev/kvartiroid/config
+dev_dependencies:
+  unittest: any
