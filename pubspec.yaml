@@ -1,8 +1,8 @@
 name: mongo_fixtures
 description: Fixtures for MongoDb
-version: 0.0.1
+version: 0.0.2
 author: Vladimir Shushkov <vladimir@shushkov.ru>
-homepage: https://github.com/vshushkov
+homepage: https://github.com/vshushkov/mongo_fixtures
 dependencies:
   mongo_dart: '>=0.1.45 <0.2.0'
 dev_dependencies:
