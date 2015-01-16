@@ -8,21 +8,26 @@ A library for inserting your test fixtures into the MongoDb using [mongo_dart](h
 
 A simple usage example:
 
-    import 'package:mongo_fixtures/mongo_fixtures.dart';
+    import 'package:mongo_fixtures/mongo_fixtures.dart' as fixtures;
 
-    List<MongoFixtureEntity> getFixtures() {
+    List<fixtures.Entity> fixturesProvider(fixtures.Loader loader) {
         return [
 
-            new MongoFixtureCollection('some_collection')
-                ..insert({
+            new fixtures.Collection('some_collection')
+                ..insert(map: {
                     'field_one': 'value1',
-                    'field_tow': 'value2',
+                    'field_two': 'value2',
+                    'field_three': loader.document('document').field('another_field_one'),
                 }),
 
-            new MongoFixtureCollection('some_another_collection')
-                ..insert({
+            new fixtures.Collection('some_another_collection')
+                ..insert(map: {
                     'another_field_one': 'value3',
-                    'another_field_tow': 'value4',
+                    'another_field_two': 'value4',
+                })
+                ..insert(label: 'document', map: {
+                    'another_field_one': 'value3',
+                    'another_field_two': 'value4',
                 })
 
         ];
@@ -33,8 +38,8 @@ A simple usage example:
         group('test group', () {
 
             setUp(() {
-                return new MongoFixtureLoader('mongodb://127.0.0.1/db_for_test')
-                    .cleanAllAndInsert(getFixtures());
+                return new fixtures.Loader('mongodb://127.0.0.1/db_for_test')
+                    .cleanAllAndInsert(fixturesProvider);
             });
 
             ...
