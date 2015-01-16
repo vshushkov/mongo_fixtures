@@ -5,21 +5,22 @@ import 'package:unittest/unittest.dart';
 import 'package:mongo_fixtures/mongo_fixtures.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
-List<MongoFixtureEntity> getFixtures() {
+List<Entity> fixturesProvider(Loader loader) {
   return [
 
-      new MongoFixtureCollection('some_collection')
-        ..insert({
+      new Collection('some_collection')
+        ..insert(map: {
           'field_one': 'value1-1',
           'field_two': 'value1-2',
+          'field_three': loader.document('document').field('another_field_two'),
       })
-        ..insert({
+        ..insert(map: {
           'field_one': 'value2-1',
           'field_two': 'value2-2',
       }),
 
-      new MongoFixtureCollection('some_another_collection')
-        ..insert({
+      new Collection('some_another_collection')
+        ..insert(label: 'document', map: {
           'another_field_one': 'value3-1',
           'another_field_two': 'value3-2',
       })
@@ -45,13 +46,13 @@ main() {
 
     test('clean all & insert', () {
 
-      MongoFixtureLoader loader = new MongoFixtureLoader(connectionString);
+      Loader loader = new Loader(connectionString);
 
       /// inserting
-      return loader.insert([
-          new MongoFixtureCollection('colection_to_delete')
-            ..insert({'bla_bla': 'bla_bla'})
-      ])
+      return loader.insert(
+        new Collection('colection_to_delete')
+          ..insert(map: {'bla_bla': 'bla_bla'})
+      )
       /// checking collection
       .then((_) => db.listCollections().then((List<String> list) {
         expect(list, hasLength(1));
@@ -59,7 +60,7 @@ main() {
       }))
 
       /// clean & insert
-      .then((_) => loader.cleanAllAndInsert(getFixtures()))
+      .then((_) => loader.cleanAllAndInsert(fixturesProvider))
 
       /// checking existing collections
       .then((_) => db.listCollections().then((List<String> list) {
@@ -69,13 +70,15 @@ main() {
       }))
 
       /// checking collection 'some_collection'
-      .then((_) => db.collection('some_collection').find().toList().then((List<Map> list) {
-        expect(list, hasLength(2));
-        expect(list[0], containsPair('field_one', 'value1-1'));
-        expect(list[0], containsPair('field_two', 'value1-2'));
-        expect(list[1], containsPair('field_one', 'value2-1'));
-        expect(list[1], containsPair('field_two', 'value2-2'));
-      }))
+      .then((_) => db.collection('some_collection')
+        .find(where.sortBy('field_one')).toList().then((List<Map> list) {
+          expect(list, hasLength(2));
+          expect(list[0], containsPair('field_one', 'value1-1'));
+          expect(list[0], containsPair('field_two', 'value1-2'));
+          expect(list[0], containsPair('field_three', 'value3-2'));
+          expect(list[1], containsPair('field_one', 'value2-1'));
+          expect(list[1], containsPair('field_two', 'value2-2'));
+        }))
 
       /// checking collection 'some_another_collection'
       .then((_) => db.collection('some_another_collection').find().toList().then((List<Map> list) {
@@ -88,10 +91,10 @@ main() {
 
     test('insert and then clean', () {
 
-      MongoFixtureLoader loader = new MongoFixtureLoader(connectionString);
+      Loader loader = new Loader(connectionString);
 
       /// inserting
-      return loader.insert(getFixtures())
+      return loader.insert(fixturesProvider)
 
       /// checking existing collections
       .then((_) => db.listCollections().then((List<String> list) {
@@ -101,13 +104,15 @@ main() {
       }))
 
       /// checking collection 'some_collection'
-      .then((_) => db.collection('some_collection').find().toList().then((List<Map> list) {
-        expect(list, hasLength(2));
-        expect(list[0], containsPair('field_one', 'value1-1'));
-        expect(list[0], containsPair('field_two', 'value1-2'));
-        expect(list[1], containsPair('field_one', 'value2-1'));
-        expect(list[1], containsPair('field_two', 'value2-2'));
-      }))
+      .then((_) => db.collection('some_collection')
+        .find(where.sortBy('field_one')).toList().then((List<Map> list) {
+          expect(list, hasLength(2));
+          expect(list[0], containsPair('field_one', 'value1-1'));
+          expect(list[0], containsPair('field_two', 'value1-2'));
+          expect(list[0], containsPair('field_three', 'value3-2'));
+          expect(list[1], containsPair('field_one', 'value2-1'));
+          expect(list[1], containsPair('field_two', 'value2-2'));
+        }))
 
       /// checking collection 'some_another_collection'
       .then((_) => db.collection('some_another_collection').find().toList().then((List<Map> list) {
