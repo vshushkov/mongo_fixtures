@@ -9,6 +9,7 @@ A library for inserting your test fixtures into the MongoDb using [mongo_dart](h
 
 A simple usage example:
 
+```dart
     import 'package:mongo_fixtures/mongo_fixtures.dart' as fixtures;
 
     List<fixtures.Entity> fixturesProvider(fixtures.Loader loader) {
@@ -47,6 +48,7 @@ A simple usage example:
 
         });
     }
+```
 
 ## Features and bugs
 
