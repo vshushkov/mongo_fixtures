@@ -10,44 +10,44 @@ A library for inserting your test fixtures into the MongoDb using [mongo_dart](h
 A simple usage example:
 
 ```dart
-    import 'package:mongo_fixtures/mongo_fixtures.dart' as fixtures;
+import 'package:mongo_fixtures/mongo_fixtures.dart' as fixtures;
 
-    List<fixtures.Entity> fixturesProvider(fixtures.Loader loader) {
-        return [
+List<fixtures.Entity> fixturesProvider(fixtures.Loader loader) {
+    return [
 
-            new fixtures.Collection('some_collection')
-                ..insert(map: {
-                    'field_one': 'value1',
-                    'field_two': 'value2',
-                    'field_three': loader.document('document').field('another_field_one'),
-                }),
+        new fixtures.Collection('some_collection')
+            ..insert(map: {
+                'field_one': 'value1',
+                'field_two': 'value2',
+                'field_three': loader.document('document').field('another_field_one'),
+            }),
 
-            new fixtures.Collection('some_another_collection')
-                ..insert(map: {
-                    'another_field_one': 'value3',
-                    'another_field_two': 'value4',
-                })
-                ..insert(label: 'document', map: {
-                    'another_field_one': 'value3',
-                    'another_field_two': 'value4',
-                })
+        new fixtures.Collection('some_another_collection')
+            ..insert(map: {
+                'another_field_one': 'value3',
+                'another_field_two': 'value4',
+            })
+            ..insert(label: 'document', map: {
+                'another_field_one': 'value3',
+                'another_field_two': 'value4',
+            })
 
-        ];
-    }
+    ];
+}
 
-    main() {
+main() {
 
-        group('test group', () {
+    group('test group', () {
 
-            setUp(() {
-                return new fixtures.Loader('mongodb://127.0.0.1/db_for_test')
-                    .cleanAllAndInsert(fixturesProvider);
-            });
-
-            ...
-
+        setUp(() {
+            return new fixtures.Loader('mongodb://127.0.0.1/db_for_test')
+                .cleanAllAndInsert(fixturesProvider);
         });
-    }
+
+        ...
+
+    });
+}
 ```
 
 ## Features and bugs
