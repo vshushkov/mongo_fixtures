@@ -1,6 +1,7 @@
 # MongoFixtures library for Dart
 
 [![Build Status](https://drone.io/github.com/vshushkov/mongo_fixtures/status.png)](https://drone.io/github.com/vshushkov/mongo_fixtures/latest)
+[![Pub](https://img.shields.io/pub/v/mongo_fixtures.svg?style=flat-square)]()
 
 A library for inserting your test fixtures into the MongoDb using [mongo_dart](https://pub.dartlang.org/packages/mongo_dart).
 
