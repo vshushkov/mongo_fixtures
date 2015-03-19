@@ -17,6 +17,8 @@ List<Entity> fixturesProvider(Loader loader) {
         ..insert(map: {
           'field_one': 'value2-1',
           'field_two': 'value2-2',
+          'field_three': loader.document('document').id(),
+          'field_four': loader.document('document').idAsHexString()
       }),
 
       new Collection('some_another_collection')
@@ -73,11 +75,23 @@ main() {
       .then((_) => db.collection('some_collection')
         .find(where.sortBy('field_one')).toList().then((List<Map> list) {
           expect(list, hasLength(2));
+
           expect(list[0], containsPair('field_one', 'value1-1'));
           expect(list[0], containsPair('field_two', 'value1-2'));
           expect(list[0], containsPair('field_three', 'value3-2'));
+
           expect(list[1], containsPair('field_one', 'value2-1'));
           expect(list[1], containsPair('field_two', 'value2-2'));
+          expect(list[1], containsPair('field_three', new isInstanceOf<ObjectId>('ObjectId')));
+          expect(list[1], containsPair('field_four', hasLength(24)));
+          expect((list[1]['field_three'] as ObjectId).toHexString(), list[1]['field_four']);
+
+          return db.collection('some_another_collection')
+          .findOne(where.id(list[1]['field_three']))
+          .then((Map map) {
+            expect(map, containsPair('another_field_one', 'value3-1'));
+            expect(map, containsPair('another_field_two', 'value3-2'));
+          });
         }))
 
       /// checking collection 'some_another_collection'
@@ -107,11 +121,22 @@ main() {
       .then((_) => db.collection('some_collection')
         .find(where.sortBy('field_one')).toList().then((List<Map> list) {
           expect(list, hasLength(2));
+
           expect(list[0], containsPair('field_one', 'value1-1'));
           expect(list[0], containsPair('field_two', 'value1-2'));
           expect(list[0], containsPair('field_three', 'value3-2'));
+
           expect(list[1], containsPair('field_one', 'value2-1'));
           expect(list[1], containsPair('field_two', 'value2-2'));
+          expect(list[1], containsPair('field_three', new isInstanceOf<ObjectId>('ObjectId')));
+          expect(list[1], containsPair('field_four', hasLength(24)));
+
+          return db.collection('some_another_collection')
+          .findOne(where.id(list[1]['field_three']))
+          .then((Map map) {
+            expect(map, containsPair('another_field_one', 'value3-1'));
+            expect(map, containsPair('another_field_two', 'value3-2'));
+          });
         }))
 
       /// checking collection 'some_another_collection'

@@ -103,7 +103,11 @@ class Loader {
     map.keys.forEach((key) {
       if (map[key] is _LabeledDocumentField) {
         _LabeledDocumentField field = map[key] as _LabeledDocumentField;
-        map[key] = _insertedDocuments[field.documentLabel].map[field.field];
+        if (field.field == '_idHexString' && _insertedDocuments[field.documentLabel].map['_id'] is ObjectId) {
+          map[key] = (_insertedDocuments[field.documentLabel].map['_id'] as ObjectId).toHexString();
+        } else {
+          map[key] = _insertedDocuments[field.documentLabel].map[field.field];
+        }
       }
     });
     return map;
@@ -163,15 +167,17 @@ class Document implements Entity {
 
   ///
   Document({this.collectionName, this.map, this.label: null}) {
-    this.map["_id"] = id;
+    this.map['_id'] = id;
   }
 
   @override
   Iterable<Document> get documents => [this];
 
   Iterable<String> get pendingFor {
-    return map.values.where((value) => value is _LabeledDocumentField)
-      .map((_LabeledDocumentField field) => field.documentLabel);
+    return unique(
+        map.values.where((value) => value is _LabeledDocumentField)
+          .map((_LabeledDocumentField field) => field.documentLabel)
+    );
   }
 }
 
@@ -198,8 +204,9 @@ class Collection implements Entity {
 class _LabeledDocument {
   final String _label;
   const _LabeledDocument(this._label);
-  _LabeledDocumentField field(String field)
-    => new _LabeledDocumentField(this._label, field);
+  _LabeledDocumentField field(String field) => new _LabeledDocumentField(this._label, field);
+  _LabeledDocumentField id() => new _LabeledDocumentField(this._label, '_id');
+  _LabeledDocumentField idAsHexString() => new _LabeledDocumentField(this._label, '_idHexString');
 }
 
 ///
@@ -212,3 +219,7 @@ class _LabeledDocumentField {
 }
 
 typedef List<Entity> Provider(Loader loader);
+
+Iterable<String> unique(Iterable<String> collection) {
+  return new Set.from(collection);
+}

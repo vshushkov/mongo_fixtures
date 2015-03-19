@@ -24,6 +24,8 @@ A simple usage example:
                 ..insert(map: {
                     'another_field_one': 'value3',
                     'another_field_two': 'value4',
+                    'another_field_three': loader.document('document').id(),
+                    'another_field_four': loader.document('document').idAsHexString(),
                 })
                 ..insert(label: 'document', map: {
                     'another_field_one': 'value3',
