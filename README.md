@@ -1,6 +1,7 @@
 # MongoFixtures library for Dart
 
 [![Build Status](https://drone.io/github.com/vshushkov/mongo_fixtures/status.png)](https://drone.io/github.com/vshushkov/mongo_fixtures/latest)
+[![Pub](https://img.shields.io/pub/v/mongo_fixtures.svg?style=flat-square)](https://pub.dartlang.org/packages/mongo_fixtures)
 
 A library for inserting your test fixtures into the MongoDb using [mongo_dart](https://pub.dartlang.org/packages/mongo_dart).
 
@@ -8,46 +9,48 @@ A library for inserting your test fixtures into the MongoDb using [mongo_dart](h
 
 A simple usage example:
 
-    import 'package:mongo_fixtures/mongo_fixtures.dart' as fixtures;
+```dart
+import 'package:mongo_fixtures/mongo_fixtures.dart' as fixtures;
 
-    List<fixtures.Entity> fixturesProvider(fixtures.Loader loader) {
-        return [
+List<fixtures.Entity> fixturesProvider(fixtures.Loader loader) {
+    return [
 
-            new fixtures.Collection('some_collection')
-                ..insert(map: {
-                    'field_one': 'value1',
-                    'field_two': 'value2',
-                    'field_three': loader.document('document').field('another_field_one'),
-                }),
+        new fixtures.Collection('some_collection')
+            ..insert(map: {
+                'field_one': 'value1',
+                'field_two': 'value2',
+                'field_three': loader.document('document').field('another_field_one'),
+            }),
 
-            new fixtures.Collection('some_another_collection')
-                ..insert(map: {
-                    'another_field_one': 'value3',
-                    'another_field_two': 'value4',
-                    'another_field_three': loader.document('document').id(),
-                    'another_field_four': loader.document('document').idAsHexString(),
-                })
-                ..insert(label: 'document', map: {
-                    'another_field_one': 'value3',
-                    'another_field_two': 'value4',
-                })
+        new fixtures.Collection('some_another_collection')
+            ..insert(map: {
+                'another_field_one': 'value3',
+                'another_field_two': 'value4',
+                'another_field_three': loader.document('document').id(),
+                'another_field_four': loader.document('document').idAsHexString()
+            })
+            ..insert(label: 'document', map: {
+                'another_field_one': 'value3',
+                'another_field_two': 'value4',
+            })
 
-        ];
-    }
+    ];
+}
 
-    main() {
+main() {
 
-        group('test group', () {
+    group('test group', () {
 
-            setUp(() {
-                return new fixtures.Loader('mongodb://127.0.0.1/db_for_test')
-                    .cleanAllAndInsert(fixturesProvider);
-            });
-
-            ...
-
+        setUp(() {
+            return new fixtures.Loader('mongodb://127.0.0.1/db_for_test')
+                .cleanAllAndInsert(fixturesProvider);
         });
-    }
+
+        ...
+
+    });
+}
+```
 
 ## Features and bugs
 
