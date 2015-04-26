@@ -90,15 +90,6 @@ class Loader {
   }
 
   ///
-  Iterable<Document> _remapDocuments(Iterable<Entity> data) {
-
-    Iterable<Document> list = data
-      .expand((Entity entity) => entity.documents);
-
-    return list;
-  }
-
-  ///
   Map _replacePlaceholders(Map map) {
     map.keys.forEach((key) {
       if (map[key] is _LabeledDocumentField) {
@@ -163,12 +154,13 @@ class Document implements Entity {
   final String label;
 
   ///
-  final ObjectId id = new ObjectId();
-
-  ///
   Document({this.collectionName, this.map, this.label: null}) {
-    this.map['_id'] = id;
+    if (this.map['_id'] == null) {
+      this.map['_id'] = new ObjectId();
+    }
   }
+
+  ObjectId get id => this.map['_id'];
 
   @override
   Iterable<Document> get documents => [this];

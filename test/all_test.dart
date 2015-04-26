@@ -155,6 +155,25 @@ main() {
 
     });
 
+    test('specify own "_id" attribute', () {
+
+      Loader loader = new Loader(connectionString);
+
+      ObjectId id = new ObjectId();
+
+      return loader.insert(
+          new Collection('some_collection')
+            ..insert(map: {'bla_bla': 'bla_bla', '_id': id})
+      )
+      .then((_) => db.collection('some_collection').find(where.id(id)).toList())
+      .then((List<Map> list) {
+        expect(list, hasLength(1));
+        expect(list[0], containsPair('bla_bla', 'bla_bla'));
+        expect(list[0], containsPair('_id', id));
+      });
+
+    });
+
   });
 
 }
